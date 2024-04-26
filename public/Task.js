@@ -22,6 +22,8 @@ export class Task {
     set body(body){this.#body = body;}
     set due_date(due_date){this.#due_date = due_date;}
 
+
+    // Takes in 3 parameters, converts to json and posts
     static async createTask(title, body, due_date){
         let json_string = JSON.stringify({
             title: title,
@@ -42,6 +44,7 @@ export class Task {
         }
 
 
+    // Finds a task by ID
     static async findTask(id){
         try{
             if(isNaN(id) || typeof id !== 'number' || id <= 0){
@@ -58,6 +61,7 @@ export class Task {
 
     }
 
+    // gets all tasks as a list of objects
     static async findAllTasks() {
         try {
             let response = await fetch("http://localhost:3000/tasks");

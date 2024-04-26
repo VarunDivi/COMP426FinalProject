@@ -41,7 +41,9 @@ app.post('/tasks', async (req,res) => {
 })
 
 //Creating default task on startup
-if(Task.getAllTasks().length != 0){
+
+console.log(await Task.countTasks());
+if(await Task.countTasks() == 0){
     Task.createTask({
         title: "Task 1",
         body: "This is the first task",

@@ -38,6 +38,11 @@ export class Task {
         return tasks
     }
 
+    static async countTasks(){
+        let taskCount = (await db.get("Select count(*) as count from Tasks")).count;
+        return taskCount;
+    }
+
     
 }
 
