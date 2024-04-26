@@ -7,3 +7,14 @@ await db.run(`
                 LastName varchar(30)
             )`
         );
+
+
+await db.run(`
+            CREATE TABLE Tasks (
+                id INTEGER PRIMARY KEY,
+                title varchar(30),
+                body varchar(255),
+                due_date DATE
+            )`
+        );
+
