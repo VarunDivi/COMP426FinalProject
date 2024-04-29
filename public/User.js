@@ -33,28 +33,32 @@ export class Users {
 
 
     static async createUser(data) {
-        if(data.password.length < 8){
-            throw new Error("Password must be at least 8 characters long");
+        try{
+            console.log(data);
+            let json_string = JSON.stringify({
+                first_name: data.first_name,
+                last_name: data.last_name,
+                email: data.email,
+                password: data.password,
+                zip: data.zip
+            });
+            console.log(json_string)
+    
+            let response = await fetch("http://localhost:3000/users", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: json_string
+            });
+    
+            let objJson = response.json();
+            console.log(objJson)
+            // return objJson;
+        } catch (e) {
+            console.error(e);
+            throw e;
         }
-
-        let json_string = JSON.stringify({
-            first_name: data.first_name,
-            last_name: data.last_name,
-            email: data.email,
-            password: data.password,
-            zip: data.zip
-        });
-
-        let response = await fetch("http://localhost:3000/users", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: json_string
-        });
-
-        let objJson = await response.json();
-        return objJson;
     }
 
     static async getUser(id) {
@@ -119,7 +123,7 @@ export class Users {
         });
 
         let objJson = await response.json();
-        return new User(objJson);
+        return objJson;
     }
 
     static async assignUserTask(user_id, task_id) {

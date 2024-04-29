@@ -23,6 +23,17 @@ export class Task {
         }
     }
 
+    static async updateTask(task_id, data) {
+        let task = await db.get("Update Tasks set title = ?, body = ?, due_date = ? where id = ?", data.title, data.body, data.due_date, task_id);
+
+        return {
+            id: task_id,
+            title: data.title,
+            body: data.body,
+            due_date: data.due_date
+        }
+
+    };
 
     static async getTask(id){
         let task = await db.get("Select * from Tasks where id = ?", id);

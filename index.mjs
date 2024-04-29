@@ -11,9 +11,6 @@ const port = 3000;
 app.use(bodyParser.json());
 app.use(cors());
 
-app.get('/', async (req,res) => {
-    res.send("Hi");
-})
 
 // Task routes
 
@@ -43,6 +40,7 @@ app.get('/tasks/:id', async (req,res) => {
 })
 
 // Create a task, takes in a json object
+// {"title": "Insert Title", "body": "Inserted Body", "due_date": "2030-10-13"}
 app.post('/tasks', async (req,res) => {
     if(req.body.title == undefined || req.body.body == undefined || req.body.due_date == undefined){
         res.status(400).send("Invalid body")
@@ -54,6 +52,19 @@ app.post('/tasks', async (req,res) => {
     res.status(200).json(task);
     return;
 })
+// Update a task, takes in a json object
+
+app.put('/tasks/:id', async (req,res) => {
+    if(req.body.id == undefined){
+        res.status(400).send("Invalid body")
+        return;
+    }
+
+    let updatedTask = await Task.updateTask(req.params.id, req.body);
+
+    res.status(200).json(updatedTask);
+    return;
+});
 
 
 // User Routes
@@ -101,20 +112,25 @@ app.get('/users/email/:email', async (req,res) => {
 // Create a user, takes in a json object
 // {"first_name": "Random", "last_name": "User", "email": "randuser@gmail.com", "password": "password", "zip": 12345}
 app.post('/users', async (req,res) => {
-    if(req.body.first_name == undefined || req.body.last_name == undefined || req.body.email == undefined || req.body.password == undefined || req.body.zip == undefined){
-        res.status(400).send("Invalid body")
-        return;
-    }
+    // if(req.body.first_name == undefined || req.body.last_name == undefined || req.body.email == undefined || req.body.password == undefined || req.body.zip == undefined){
+    //     res.status(400).send("Invalid body")
+    //     return;
+    // }
 
-    if(req.body.password.length < 8){
-        res.status(400).send("Password must be at least 8 characters long")
-        return;
-    }
+    // if(req.body.password.length < 8){
+    //     res.status(400).send("Password must be at least 8 characters long")
+    //     return;
+    // }
 
     let user = await Users.createUser(req.body);
-
-    res.status(200).json(user);
-    return;
+    console.log(user)
+    if(user){
+        res.status(200).json(user);
+        return;
+    } else {
+        res.status(500).send("User already exists")
+        return;
+    }
 })
 
 // Log in a user, takes in a json object
@@ -261,8 +277,8 @@ if(await Users.countUsers() == 0){
     });
 }
 
-
-if(Users.countUserTask() == 0){
+console.log(`Num user tasks ${Users.countUserTask()}`);
+if(await Users.countUserTask() == 0){
     // Assigning User 1 to Task 1. John to Task 1
     Users.assignUserTask(1,1);
     // Assigning User 2 to Task 2. Jane to Task 2
@@ -272,7 +288,11 @@ if(Users.countUserTask() == 0){
 }
 
 
-
+app.use('*', (req, res) => {
+    console.log(`Unexpected request to ${req.originalUrl}`);
+    res.status(404).send('Page not found');
+  });
+  
 
 app.listen(port, () => {
     console.log(`Running on ${port}`)

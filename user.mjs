@@ -18,21 +18,48 @@ export class Users {
     }
 
     static async createUser(data) {
-        if(data.password.length < 8){
-            throw new Error("Password must be at least 8 characters long");
+        try {
+            // if(data.password.length < 8){
+            //     throw new Error("Password must be at least 8 characters long");
+            // }
+            // Check if user exists
+            // let user_check = await db.get("Select * from Users where email = ?", data.email);
+            // if(user_check){
+            //     throw new Error("User already exists");
+            // }
+
+            let user = await db.run("Insert into Users (first_name, last_name, email, password, zip) values (?,?,?,?,?)", data.first_name, data.last_name, data.email, data.password, data.zip);
+
+            return {
+                id: 99,
+                // id: user.lastID,
+                first_name: data.first_name,
+                last_name: data.last_name,
+                email: data.email,
+                password: data.password,
+                zip: data.zip
+            }
+        } catch (e) {
+            console.error(e);
+            return null;
         }
+    }
 
-        let user = (await db.run("Insert Into Users (first_name, last_name, email, password, zip) values (?,?,?,?,?)", data.first_name, data.last_name, data.email, data.password, data.zip)).lastID;
-
-        return {
-            id: user.lastID,
-            first_name: data.first_name,
-            last_name: data.last_name,
-            email: data.email,
-            password: data.password,
-            zip: data.zip
+    static async creatingUserinDB(data){
+        try {
+            let user = (await db.run("Insert into Users (first_name, last_name, email, password, zip) values (?,?,?,?,?)", data.first_name, data.last_name, data.email, data.password, data.zip));
+            return {
+                id: user.lastID,
+                first_name: data.first_name,
+                last_name: data.last_name,
+                email: data.email,
+                password: data.password,
+                zip: data.zip
+            }
+        } catch (e) {
+            console.error(e);
+            return null;
         }
-
     }
 
     static async getUser(id) {
@@ -127,7 +154,7 @@ export class Users {
         let taskList = []
         let userTasks = await db.all("Select * from UserTasks where user_id = ?", id);
         for(const task of userTasks){
-            let task_data = (await db.get("Select Tasks.title, Tasks.body, Tasks.due_date from Tasks where id = ?", task.task_id));
+            let task_data = (await db.get("Select Tasks.id, Tasks.title, Tasks.body, Tasks.due_date from Tasks where id = ?", task.task_id));
             taskList.push(task_data);
         }
         return taskList;

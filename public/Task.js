@@ -73,6 +73,33 @@ export class Task {
         }
     }
 
+    static async updateTask(task_id, data){
+        try {
+            console.log(data)
+            console.log(task_id)
+                let response = await fetch(`http://localhost:3000/tasks/${task_id}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        id: task_id,
+                        title: data.title,
+                        body: data.body,
+                        due_date: data.due_date
+                    })
+                });
+
+                let objJson = await response.json();
+                console.log('This is the objson')
+                console.log(objJson);
+                return objJson;
+            } catch (e) {
+                console.error(e);
+                throw e;
+        }
+    }
+
 
 
 
