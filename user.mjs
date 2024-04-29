@@ -78,10 +78,12 @@ export class Users {
             let user = await db.get("Select * from Users where email = ?", email);
             let user_complete = await db.get("Select * from Users where email = ? and password = ?", email, password);
             if(user && !user_complete){
+                console.log(user_complete)
                 throw new Error("Invalid Password");
             }
             // email not found
-            if(!user){
+            if(!user && !user_complete){
+                console.log(user)
                 throw new Error("Email not found");
             }
             // email and password match

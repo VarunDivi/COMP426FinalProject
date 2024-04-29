@@ -93,7 +93,7 @@ export class Users {
         });
 
         let objJson = await response.json();
-        return new User(objJson);
+        return objJson;
     }
 
 

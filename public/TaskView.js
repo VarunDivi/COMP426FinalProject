@@ -29,15 +29,18 @@ export class TaskView {
         let loginButton = document.createElement('button');
         loginButton.innerHTML = "Login";
         loginButton.addEventListener('click', async (e) => {
+            e.preventDefault();
             let email = emailInput.value;
             let password = passwordInput.value;
-
-            let user = await Users.userLogin(email, password);
-            if(user == null){
-                alert("Invalid email or password");
-            } else {
-                this.rootDiv.innerHTML = ""; // clears page, loads homediv after auth
-                this.rootDiv.appendChild(this.createHomeDiv(user));
+            console.log("Entered info, not validated")
+            try{
+                let user = await Users.userLogin(email, password);
+                console.log(user);
+                userLoginDiv.innerHTML = ""; // clears page, loads homediv after auth
+                userLoginDiv.appendChild(this.createHomeDiv(user));
+            } catch (e){
+                console.log(e);
+                alert(e);
             }
         });
         userLoginForm.appendChild(loginButton);
@@ -88,6 +91,14 @@ export class TaskView {
         }
 
         loadTasks();
+
+        let logoutButton = document.createElement('button');
+        logoutButton.innerHTML = "Logout";
+        logoutButton.addEventListener('click', (e) => {
+            homeDiv.innerHTML = "";
+            homeDiv.appendChild(this.userLoginDiv());
+        });
+        homeDiv.appendChild(logoutButton);
 
         // let seeWeatherButton = document.createElement('button');
         // seeWeatherButton.innerHTML = "See Weather";

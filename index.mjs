@@ -22,8 +22,10 @@ app.get('/tasks', async (req,res) => {
     let tasks = await Task.getAllTasks();
     if(tasks.length == 0){
         res.status(404).send("No tasks found");
+        return;
     }
     res.status(200).json(tasks);
+    return;
 })
 
 // Get a specific task, takes task id
@@ -31,22 +33,26 @@ app.get('/tasks/:id', async (req,res) => {
     const id = parseInt(req.params.id);
     if(isNaN(id) || typeof id !== 'number' || id <= 0){
         res.status(400).send("Specified ID should be Positive numeric");
+        return;
     }
 
     let task = await Task.getTask(id)
 
     res.status(200).json(task);
+    return;
 })
 
 // Create a task, takes in a json object
 app.post('/tasks', async (req,res) => {
     if(req.body.title == undefined || req.body.body == undefined || req.body.due_date == undefined){
         res.status(400).send("Invalid body")
+        return;
     }
 
     let task = await Task.createTask(req.body)
 
     res.status(200).json(task);
+    return;
 })
 
 
@@ -57,9 +63,11 @@ app.get('/users', async (req,res) =>{
     let users = await Users.getAllUsers();
     if(users.length == 0){
         res.status(404).send("No users found");
+        return;
     }
 
     res.status(200).json(users);
+    return;
 })
 
 // Get a specific user, takes user id
@@ -68,11 +76,13 @@ app.get('/users/:id', async (req,res) => {
 
     if(isNaN(id) || typeof id !== 'number' || id <= 0){
         res.status(400).send("Specified ID should be Positive numeric");
+        return;
     }
 
     let user = await Users.getUser(id);
 
     res.status(200).json(user);
+    return;
 })
 
 // Get a specific user ID by email, takes email
@@ -81,9 +91,11 @@ app.get('/users/email/:email', async (req,res) => {
 
     if(user == null){
         res.status(404).send("User not found")
+        return;
     }
 
     res.status(200).json(user);
+    return;
 });
 
 // Create a user, takes in a json object
@@ -91,15 +103,18 @@ app.get('/users/email/:email', async (req,res) => {
 app.post('/users', async (req,res) => {
     if(req.body.first_name == undefined || req.body.last_name == undefined || req.body.email == undefined || req.body.password == undefined || req.body.zip == undefined){
         res.status(400).send("Invalid body")
+        return;
     }
 
     if(req.body.password.length < 8){
         res.status(400).send("Password must be at least 8 characters long")
+        return;
     }
 
     let user = await Users.createUser(req.body);
 
     res.status(200).json(user);
+    return;
 })
 
 // Log in a user, takes in a json object
@@ -107,14 +122,18 @@ app.post('/users', async (req,res) => {
 app.post('/login', async (req,res) => {
     if(req.body.email == undefined || req.body.password == undefined){
         res.status(400).send("Invalid body")
+        return;
     }
 
     let user = await Users.userLogin(req.body.email, req.body.password);
     if(user == null){
         res.status(404).send("Invalid email or password")
+        return;
     }
 
     res.status(200).json(user);
+    return;
+
 })
 
 // Update a user, takes in a json object. Finds user id from json email attribute
@@ -122,16 +141,19 @@ app.post('/login', async (req,res) => {
 app.put('/users', async (req,res) => {
     if(req.body.email == undefined){
         res.status(400).send("Invalid body")
+        return;
     }
 
     let user_id = await Users.findUserIDByEmail(req.body.email);
     if(user_id == null){
         res.status(404).send("User not found")
+        return;
     }
 
     let updatedUser = await Users.updateUser(user_id.id, req.body);
 
     res.status(200).json(updatedUser);
+    return;
 })
 
 // Assigning a task to a user, takes in a json object
@@ -139,15 +161,18 @@ app.put('/users', async (req,res) => {
 app.post('/users/assign', async (req,res) => {
     if(req.body.user_id == undefined || req.body.task_id == undefined){
         res.status(400).send("Invalid body")
+        return;
     }
 
     let assignment = await Users.assignUserTask(req.body.user_id, req.body.task_id);
 
     if(assignment == null){
         res.status(404).send("User or Task not found or UserTask already exists")
+        return;
     }
 
     res.status(200).json(assignment);
+    return;
 })
 
 // Get all tasks assigned to a user, takes in user id
@@ -156,6 +181,7 @@ app.get('/users/:id/tasks', async (req,res) => {
 
     if(isNaN(id) || typeof id !== 'number' || id <= 0){
         res.status(400).send("Specified ID should be Positive numeric");
+        return;
     }
 
     let tasks = await Users.getUserTasks(id);
@@ -171,6 +197,7 @@ app.get('/users/:id/tasks', async (req,res) => {
     }
 
     res.status(200).json(tasks);
+    return;
 })
 
 
