@@ -44,7 +44,7 @@ export class Task {
         }
 
 
-    // Finds a task by ID
+    // Finds a task by ID. Returns a Task object that you can then access after its creation using getters
     static async findTask(id){
         try{
             if(isNaN(id) || typeof id !== 'number' || id <= 0){

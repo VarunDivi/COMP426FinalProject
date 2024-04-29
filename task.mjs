@@ -23,6 +23,7 @@ export class Task {
         }
     }
 
+
     static async getTask(id){
         let task = await db.get("Select * from Tasks where id = ?", id);
         return {
@@ -33,16 +34,17 @@ export class Task {
         }
     }
 
+    // Gets a json list of all tasks. Can be parsed
     static async getAllTasks(){
         let tasks = await db.all("Select * from Tasks");
         return tasks
     }
 
+    // counts tasks
     static async countTasks(){
         let taskCount = (await db.get("Select count(*) as count from Tasks")).count;
         return taskCount;
     }
-
     
 }
 

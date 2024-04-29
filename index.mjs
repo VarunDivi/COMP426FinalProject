@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import { Task } from './task.mjs';
+import {Users} from './user.mjs';
 
 const app = express();
 
@@ -14,22 +15,30 @@ app.get('/', async (req,res) => {
     res.send("Hi");
 })
 
+// Task routes
+
+// Get all Tasks, no params
 app.get('/tasks', async (req,res) => {
     let tasks = await Task.getAllTasks();
+    if(tasks.length == 0){
+        res.status(404).send("No tasks found");
+    }
     res.status(200).json(tasks);
 })
 
+// Get a specific task, takes task id
 app.get('/tasks/:id', async (req,res) => {
+    const id = parseInt(req.params.id);
     if(isNaN(id) || typeof id !== 'number' || id <= 0){
         res.status(400).send("Specified ID should be Positive numeric");
     }
 
-    const id = parseInt(req.params.id);
     let task = await Task.getTask(id)
 
     res.status(200).json(task);
 })
 
+// Create a task, takes in a json object
 app.post('/tasks', async (req,res) => {
     if(req.body.title == undefined || req.body.body == undefined || req.body.due_date == undefined){
         res.status(400).send("Invalid body")
@@ -40,8 +49,132 @@ app.post('/tasks', async (req,res) => {
     res.status(200).json(task);
 })
 
-//Creating default task on startup
 
+// User Routes
+
+// Get all users, no params
+app.get('/users', async (req,res) =>{
+    let users = await Users.getAllUsers();
+    if(users.length == 0){
+        res.status(404).send("No users found");
+    }
+
+    res.status(200).json(users);
+})
+
+// Get a specific user, takes user id
+app.get('/users/:id', async (req,res) => {
+    const id = parseInt(req.params.id);
+
+    if(isNaN(id) || typeof id !== 'number' || id <= 0){
+        res.status(400).send("Specified ID should be Positive numeric");
+    }
+
+    let user = await Users.getUser(id);
+
+    res.status(200).json(user);
+})
+
+// Get a specific user ID by email, takes email
+app.get('/users/email/:email', async (req,res) => {
+    let user = await Users.findUserIDByEmail(req.params.email);
+
+    if(user == null){
+        res.status(404).send("User not found")
+    }
+
+    res.status(200).json(user);
+});
+
+// Create a user, takes in a json object
+// {"first_name": "Random", "last_name": "User", "email": "randuser@gmail.com", "password": "password", "zip": 12345}
+app.post('/users', async (req,res) => {
+    if(req.body.first_name == undefined || req.body.last_name == undefined || req.body.email == undefined || req.body.password == undefined || req.body.zip == undefined){
+        res.status(400).send("Invalid body")
+    }
+
+    if(req.body.password.length < 8){
+        res.status(400).send("Password must be at least 8 characters long")
+    }
+
+    let user = await Users.createUser(req.body);
+
+    res.status(200).json(user);
+})
+
+// Log in a user, takes in a json object
+// {"email": "jdoe@gmail.com", "password": "password"}
+app.post('/login', async (req,res) => {
+    if(req.body.email == undefined || req.body.password == undefined){
+        res.status(400).send("Invalid body")
+    }
+
+    let user = await Users.userLogin(req.body.email, req.body.password);
+    if(user == null){
+        res.status(404).send("Invalid email or password")
+    }
+
+    res.status(200).json(user);
+})
+
+// Update a user, takes in a json object. Finds user id from json email attribute
+// {"first_name": "Random_updated", "last_name": "User", "email": "randuser@gmail.com", "password": "password", "zip": 12345}
+app.put('/users', async (req,res) => {
+    if(req.body.email == undefined){
+        res.status(400).send("Invalid body")
+    }
+
+    let user_id = await Users.findUserIDByEmail(req.body.email);
+    if(user_id == null){
+        res.status(404).send("User not found")
+    }
+
+    let updatedUser = await Users.updateUser(user_id.id, req.body);
+
+    res.status(200).json(updatedUser);
+})
+
+// Assigning a task to a user, takes in a json object
+// {"user_id": 1, "task_id": 1}
+app.post('/users/assign', async (req,res) => {
+    if(req.body.user_id == undefined || req.body.task_id == undefined){
+        res.status(400).send("Invalid body")
+    }
+
+    let assignment = await Users.assignUserTask(req.body.user_id, req.body.task_id);
+
+    if(assignment == null){
+        res.status(404).send("User or Task not found or UserTask already exists")
+    }
+
+    res.status(200).json(assignment);
+})
+
+// Get all tasks assigned to a user, takes in user id
+app.get('/users/:id/tasks', async (req,res) => {
+    const id = parseInt(req.params.id);
+
+    if(isNaN(id) || typeof id !== 'number' || id <= 0){
+        res.status(400).send("Specified ID should be Positive numeric");
+    }
+
+    let tasks = await Users.getUserTasks(id);
+
+    if(tasks == null){
+        res.status(404).send("User not found")
+        return;
+    }
+
+    if(tasks.length == 0){
+        res.status(200).send(`No tasks assigned to user ${id}`)
+        return;
+    }
+
+    res.status(200).json(tasks);
+})
+
+
+//Creating default task on startup
 console.log(await Task.countTasks());
 if(await Task.countTasks() == 0){
     Task.createTask({
@@ -74,6 +207,41 @@ if(await Task.countTasks() == 0){
         due_date: "2024-4-30"
     })
 
+}
+
+if(await Users.countUsers() == 0){
+    Users.createUser({
+        first_name: "John",
+        last_name: "Doe",
+        email: "jdoe@gmail.com",
+        password: "password",
+        zip: 12345
+    });
+    Users.createUser({
+        first_name: "Jane",
+        last_name: "Doe",
+        email: "Janedoe@gmail.com",
+        password: "password",
+        zip: 12345
+    });
+
+    Users.createUser({
+        first_name: "Ron",
+        last_name: "Smith",
+        email: "rsmith@gmail.com",
+        password: "password",
+        zip: 12345
+    });
+}
+
+
+if(Users.countUserTask() == 0){
+    // Assigning User 1 to Task 1. John to Task 1
+    Users.assignUserTask(1,1);
+    // Assigning User 2 to Task 2. Jane to Task 2
+    Users.assignUserTask(1,2);
+    // Assigning User 3 to Task 3. Ron to Task 3
+    Users.assignUserTask(2,3);
 }
 
 

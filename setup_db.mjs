@@ -3,8 +3,11 @@ import {db} from './db.mjs';
 await db.run(`
             CREATE TABLE Users (
                 id INTEGER PRIMARY KEY,
-                FirstName varchar(30),
-                LastName varchar(30)
+                first_name varchar(30),
+                last_name varchar(30),
+                email varchar(30),
+                password varchar(30),
+                zip INTEGER
             )`
         );
 
@@ -15,6 +18,14 @@ await db.run(`
                 title varchar(30),
                 body varchar(255),
                 due_date DATE
+            )`
+        );
+
+await db.run(`
+            CREATE TABLE UserTasks (
+                id INTEGER PRIMARY KEY,
+                user_id INTEGER,
+                task_id INTEGER
             )`
         );
 
