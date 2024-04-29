@@ -12,6 +12,7 @@
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "sqlite": "^5.1.1",
-    "sqlite-async": "^1.2.0"
+    "sqlite-async": "^1.2.0",
+    "sqlite3-async": "^1.0.3"
   }
 }

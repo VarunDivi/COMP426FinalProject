@@ -1,6 +1,10 @@
 import {Task} from './Task.js';
 import {Users} from './User.js';
+
+let apiKey = "NlgXd4ZKUu9sGPog4oC6iW3BnRuW1rs3";
 export class TaskView {
+    #zip_code
+
     constructor(rootDiv){
         this.rootDiv = rootDiv;
         let userLoginDiv = this.userLoginDiv();
@@ -92,6 +96,9 @@ export class TaskView {
 
         loadTasks();
 
+        let weatherDiv = this.createWeatherDiv();
+        homeDiv.append(weatherDiv);
+
         let logoutButton = document.createElement('button');
         logoutButton.innerHTML = "Logout";
         logoutButton.addEventListener('click', (e) => {
@@ -124,20 +131,42 @@ export class TaskView {
         return taskDiv;
     }
 
+    createWeatherDiv(){
+        let weatherDiv = document.createElement('div');
+        weatherDiv.classList.add('weather');
 
-    // createWeatherDiv(){
-    //     let weatherDiv = document.createElement('div');
-    //     weatherDiv.classList.add('weather');
+        weatherDiv.innerHTML = `
+            <div>
+            <label for="zip-code">Zip Code:</label>
+            <input type="text" id="zip-code" name="zip-code"/>
+            <button id=weather-button>Get Weather</button>
+            </div>
 
-    //     let weather = await fetch("http://localhost:3000/weather");
-    //     let weatherJson = await weather.json();
+            <p>hiii</p>
+        `;
 
-    //     weatherDiv.innerHTML = `
-    //         <h1>${weatherJson.city}</h1>
-    //         <p>${weatherJson.temperature}</p>
-    //         <p>${weatherJson.weather}</p>
-    //     `;
+        // let zipCode = "";
+        let query = weatherDiv.querySelector('#weather-button');
+        query.addEventListener('click', async () => {
+            let inputElement = document.getElementById("zip-code");
+            this.#zip_code = inputElement.value;
 
-    //     return weatherDiv;
-    // }
+            let weather = (await fetch("http://dataservice.accuweather.com/locations/v1/postalcodes/search" +
+            '&q=' + this.#zip_code +
+            '&apiKey=' + apiKey));
+            let weatherJson = await weather.json();
+            let locationKey = weatherJson.Key;
+            console.log(locationKey);
+
+            let currentWeatherDiv = document.createElement('div');
+            currentWeatherDiv.innerHTML = `
+                <h1>${weatherJson.city}hii</h1>
+                <p>${weatherJson.temperature}</p>
+                <p>${weatherJson.weather}</p>`;
+            // weatherDiv.append(currentWeatherDiv);
+            console.log(this.#zip_code);
+        });
+        
+        return weatherDiv;
+    }
 }
