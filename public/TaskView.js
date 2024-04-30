@@ -255,11 +255,16 @@ loadTaskDiv(task, fromEdit=false) {
 updateTaskDivContent(taskDiv, task) {
     taskDiv.innerHTML = `
         <h1>${task.title}</h1>
+        <p>${task.category}</p>
         <p>${task.body}</p>
-        <p>${task.due_date}</p>
+        <p>${task.deadline}</p>
+        <p>${task.created_at}</p>
+        <p>${task.completed}</p>
+        <p>${task.urgency}</p>
         <p>${task.id}</p>
         <button>Edit Task</button>
     `;
+
     taskDiv.querySelector('button').addEventListener('click', (e) => {
         e.preventDefault();
         this.showEditForm(taskDiv, task);
