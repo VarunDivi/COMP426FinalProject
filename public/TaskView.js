@@ -92,6 +92,9 @@ export class TaskView {
 
         loadTasks();
 
+        let phraseDivView = this.createPhraseDiv();
+        homeDiv.append(phraseDivView);
+
         let logoutButton = document.createElement('button');
         logoutButton.innerHTML = "Logout";
         logoutButton.addEventListener('click', (e) => {
@@ -125,19 +128,29 @@ export class TaskView {
     }
 
 
-    // createWeatherDiv(){
-    //     let weatherDiv = document.createElement('div');
-    //     weatherDiv.classList.add('weather');
+    createPhraseDiv(){
+        let phraseDiv = document.createElement('div');
+        phraseDiv.classList.add('phrase');
+ 
+        phraseDiv.innerHTML = `
+            <div>
+            <button id=phrase-button>Get Inspirational Phrase</button>
+            </div>
+        `;
+        let query = phraseDiv.querySelector('#phrase-button');
+        let inspirationalPhraseDiv = document.createElement('h5');
+        query.addEventListener('click', async () => {
+ 
+            let phrase = (await fetch("https://corporatebs-generator.sameerkumar.website/"));
+            let phraseJson = await phrase.json();
+ 
+            let inspirationalPhrase = phraseJson.phrase;
+            
+            inspirationalPhraseDiv.innerHTML = `<p>${inspirationalPhrase}</p>`;
+            phraseDiv.append(inspirationalPhraseDiv);
+        });
 
-    //     let weather = await fetch("http://localhost:3000/weather");
-    //     let weatherJson = await weather.json();
-
-    //     weatherDiv.innerHTML = `
-    //         <h1>${weatherJson.city}</h1>
-    //         <p>${weatherJson.temperature}</p>
-    //         <p>${weatherJson.weather}</p>
-    //     `;
-
-    //     return weatherDiv;
-    // }
+        return phraseDiv;
+    }
+ 
 }
