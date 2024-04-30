@@ -113,15 +113,16 @@ app.get('/users/email/:email', async (req,res) => {
 // Create a user, takes in a json object
 // {"first_name": "Random", "last_name": "User", "email": "randuser@gmail.com", "password": "password", "zip": 12345}
 app.post('/users', async (req,res) => {
-    // if(req.body.first_name == undefined || req.body.last_name == undefined || req.body.email == undefined || req.body.password == undefined || req.body.zip == undefined){
-    //     res.status(400).send("Invalid body")
-    //     return;
-    // }
+    if(req.body.first_name == undefined || req.body.last_name == undefined || req.body.email == undefined || req.body.password == undefined || req.body.zip == undefined){
+        res.status(400).send("Invalid body")
+        return;
+    }
 
-    // if(req.body.password.length < 8){
-    //     res.status(400).send("Password must be at least 8 characters long")
-    //     return;
-    // }
+    if(req.body.password.length < 8){
+        console.log("Invalid password length")
+        res.status(400).send("Password must be at least 8 characters long")
+        return;
+    }
 
     let user = await Users.createUser(req.body);
     console.log(user)

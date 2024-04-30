@@ -19,14 +19,14 @@ export class Users {
 
     static async createUser(data) {
         try {
-            // if(data.password.length < 8){
-            //     throw new Error("Password must be at least 8 characters long");
-            // }
+            if(data.password.length < 8){
+                throw new Error("Password must be at least 8 characters long");
+            }
             // Check if user exists
-            // let user_check = await db.get("Select * from Users where email = ?", data.email);
-            // if(user_check){
-            //     throw new Error("User already exists");
-            // }
+            let user_check = await db.get("Select * from Users where email = ?", data.email);
+            if(user_check){
+                throw new Error("User already exists");
+            }
 
             let user = await db.run("Insert into Users (first_name, last_name, email, password, zip) values (?,?,?,?,?)", data.first_name, data.last_name, data.email, data.password, data.zip);
 

@@ -68,7 +68,6 @@ export class TaskView {
             e.preventDefault();
             let email = emailInput.value;
             let password = passwordInput.value;
-            console.log("Entered info for UserLoginDiv(), not validated")
             try{
                 let user = await Users.userLogin(email, password);
                 console.log(user);
@@ -83,21 +82,18 @@ export class TaskView {
 
         userLoginDiv.appendChild(userLoginForm);
 
-        // Test button
-        let testButton = document.createElement('button');
-        testButton.innerHTML = "Test";
-        testButton.addEventListener('click', async (e) => {
-            e.stopPropagation();
+        //Back to home
+        let goHomeButton = document.createElement('button');
+        goHomeButton.innerHTML = "Back to Login";
+        goHomeButton.addEventListener('click', async (e) => {
+            console.log("Back to Login Button Clicked");
             e.preventDefault();
-            let data = {"first_name": "John", "last_name": "Doe", "email": "gmail.com", "password": "password", "zip": 12345};
-            let user = await Users.getAllUserTasks(1);
-            console.log(user);
+            userLoginDiv.innerHTML = "";
+            userLoginDiv.appendChild(this.userEntryDiv());
         });
 
-        userLoginDiv.appendChild(testButton);
+        userLoginDiv.appendChild(goHomeButton);
 
-
-        console.log("Out of userlogin button")
         return userLoginDiv;
 
         
@@ -155,19 +151,33 @@ export class TaskView {
             console.log("Entered info for createUserDiv, not validated")
             try{
                 let data = {first_name, last_name, email, password, zip};
-                await Users.createUser(data);
+                const user_created = await Users.createUser(data);
                 console.log(data)
-                // console.log(user)
-                // createUserDiv.innerHTML = "";
-                // createUserDiv.appendChild(this.createHomeDiv(user));
+                console.log("Printing user retrieved down")
+                console.log(user_created)
+                createUserDiv.innerHTML = "";
+                createUserDiv.appendChild(this.createHomeDiv(user_created));
                 console.log("After homediv reroute")
             } catch (e){
+                let error_mes = document.createElement('p');
+                error_mes.innerHTML = e;
+                createUserDiv.appendChild(error_mes);
                 console.log(e);
                 alert(e);
             }
         });
-        createUserForm.appendChild(createUserButton);
 
+        let goHomeButton = document.createElement('button');
+        goHomeButton.innerHTML = "Back to Login";
+        goHomeButton.addEventListener('click', async (e) => {
+            console.log("Back to Login Button Clicked");
+            e.preventDefault();
+            createUserDiv.innerHTML = "";
+            createUserDiv.appendChild(this.userEntryDiv());
+        });
+
+        createUserForm.appendChild(createUserButton);
+        createUserDiv.appendChild(goHomeButton);
         createUserDiv.appendChild(createUserForm);
         console.log("Out of createuser button")
         return createUserDiv;
@@ -197,7 +207,7 @@ export class TaskView {
             console.log(`Reached loadtasks. User id: ${user.id}`)
             const taskList = await Users.getAllUserTasks(user.id);
             taskList.forEach(async(task)=>{
-                let taskDiv = this.createTaskDiv(task); // We are passing in the parsed task
+                let taskDiv = this.loadTaskDiv(task); // We are passing in the parsed task
                 let taskList = document.querySelector('.taskList'); // Retrieving the taskList div and adding to it
                 taskList.appendChild(taskDiv);
             })
@@ -223,87 +233,69 @@ export class TaskView {
         console.log("reached end of homediv")
         return homeDiv;
     }
+// This function loads a div for each task
+loadTaskDiv(task, fromEdit=false) {
+    let taskDiv = document.createElement('div');
+    taskDiv.classList.add('task');
 
-    // creates a div for each task
-    createTaskDiv(task) {
-        let taskDiv = document.createElement('div');
-        taskDiv.classList.add('task');
+    this.updateTaskDivContent(taskDiv, task);
 
-        taskDiv.innerHTML = `
-            <h1>${task.title}</h1>
-            <p>${task.body}</p>
-            <p>${task.due_date}</p>
-            <p>${task.id}</p>
-        `;
+    // Button to edit task
+    let editButton = document.createElement('button');
+    editButton.innerHTML = "Edit Task";
+    editButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.showEditForm(taskDiv, task);
+    });
+    taskDiv.appendChild(editButton);
 
-        // Button to edit task. Renders a editTaskDiv in the same div and same location
-        let editButton = document.createElement('button');
-        editButton.innerHTML = "Edit Task";
-        editButton.addEventListener('click', async (e) => {
-            e.preventDefault();
-            taskDiv.innerHTML = "";
-            taskDiv.appendChild(this.editTaskDiv(task));
-        });
-        taskDiv.appendChild(editButton);
+    return taskDiv;
+}
 
-        return taskDiv;
-    }
+// Updates the content of the taskDiv with task details
+updateTaskDivContent(taskDiv, task) {
+    taskDiv.innerHTML = `
+        <h1>${task.title}</h1>
+        <p>${task.body}</p>
+        <p>${task.due_date}</p>
+        <p>${task.id}</p>
+        <button>Edit Task</button>
+    `;
+    taskDiv.querySelector('button').addEventListener('click', (e) => {
+        e.preventDefault();
+        this.showEditForm(taskDiv, task);
+    });
+}
 
-    // creates a div for editing a task
-    editTaskDiv(task){
-        // Create a form to edit a task
-        let editTaskDiv = document.createElement('div');
-        editTaskDiv.classList.add('editTask');
+// Show edit form in the taskDiv
+showEditForm(taskDiv, task) {
+    taskDiv.innerHTML = ''; // Clear the existing content
+    let form = document.createElement('form');
+    form.innerHTML = `
+        <input type="text" name="title" placeholder="Title" value="${task.title}">
+        <input type="text" name="body" placeholder="Body" value="${task.body}">
+        <input type="text" name="due_date" placeholder="Due Date" value="${task.due_date}">
+        <button type="submit">Save Changes</button>
+    `;
+    taskDiv.appendChild(form);
 
-        let editTaskForm = document.createElement('form');
-        editTaskForm.classList.add('editTaskForm');
-        // Prevent default form submission
-        editTaskForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-        });
-
-        let titleInput = document.createElement('input');
-        titleInput.setAttribute('type', 'text');
-        titleInput.setAttribute('placeholder', 'Title');
-        editTaskForm.appendChild(titleInput);
-
-        let bodyInput = document.createElement('input');
-        bodyInput.setAttribute('type', 'text');
-        bodyInput.setAttribute('placeholder', 'Body');
-        editTaskForm.appendChild(bodyInput);
-
-        let dueDateInput = document.createElement('input');
-        dueDateInput.setAttribute('type', 'text');
-        dueDateInput.setAttribute('placeholder', 'Due Date');
-        editTaskForm.appendChild(dueDateInput);
-
-        let editTaskButton = document.createElement('button');
-        editTaskButton.innerHTML = "Edit Task";
-        editTaskButton.addEventListener('click', async (e) => {
-            e.preventDefault();
-            let title = titleInput.value;
-            let body = bodyInput.value;
-            let due_date = dueDateInput.value;
-            console.log("Entered info for editTaskDiv, not validated")
-            try{
-                let data = {title, body, due_date};
-                await Task.updateTask(task.id, data);
-                console.log(data)
-                // console.log(user)
-                // createUserDiv.innerHTML = "";
-                // createUserDiv.appendChild(this.createHomeDiv(user));
-            } catch (e){
-                console.log(e);
-                alert(e);
-            }
-        });
-        editTaskForm.appendChild(editTaskButton);
-        editTaskDiv.appendChild(editTaskForm);
-
-        return editTaskDiv;
-
-    }
-
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const data = {
+            title: formData.get('title'),
+            body: formData.get('body'),
+            due_date: formData.get('due_date')
+        };
+        try {
+            let updatedTask = await Task.updateTask(task.id, data);
+            this.updateTaskDivContent(taskDiv, updatedTask);
+        } catch (error) {
+            console.error(error);
+            alert(error.message || 'Failed to update task');
+        }
+    });
+}
 
     // createWeatherDiv(){
     //     let weatherDiv = document.createElement('div');
