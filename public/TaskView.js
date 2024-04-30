@@ -278,7 +278,7 @@ showEditForm(taskDiv, task) {
     form.innerHTML = `
         <input type="text" name="title" placeholder="Title" value="${task.title}">
         <input type="text" name="body" placeholder="Body" value="${task.body}">
-        <input type="text" name="due_date" placeholder="Due Date" value="${task.due_date}">
+        <input type="text" name="deadline" placeholder="Deadline" value="${task.deadline}">
         <button type="submit">Save Changes</button>
     `;
     taskDiv.appendChild(form);
@@ -289,7 +289,7 @@ showEditForm(taskDiv, task) {
         const data = {
             title: formData.get('title'),
             body: formData.get('body'),
-            due_date: formData.get('due_date')
+            deadline: formData.get('deadline')
         };
         try {
             let updatedTask = await Task.updateTask(task.id, data);
