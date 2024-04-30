@@ -128,7 +128,7 @@ export class TaskView {
     }
 
 
-    createPhraseDiv(){
+    createPhraseDiv() {
         let phraseDiv = document.createElement('div');
         phraseDiv.classList.add('phrase');
  
@@ -138,6 +138,7 @@ export class TaskView {
             </div>
         `;
         let query = phraseDiv.querySelector('#phrase-button');
+
         let inspirationalPhraseDiv = document.createElement('h5');
         query.addEventListener('click', async () => {
  
@@ -148,9 +149,9 @@ export class TaskView {
             
             inspirationalPhraseDiv.innerHTML = `<p>${inspirationalPhrase}</p>`;
             phraseDiv.append(inspirationalPhraseDiv);
+
         });
 
         return phraseDiv;
     }
- 
 }
