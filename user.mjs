@@ -168,6 +168,7 @@ export class Users {
     static async assignUserTask(user_id, task_id){
         try{
             // Check if user exists
+            console.log(user_id, task_id)
             let user = await db.get("Select * from Users where id = ?", user_id);
             if(!user){
                 throw new Error("User does not exist");

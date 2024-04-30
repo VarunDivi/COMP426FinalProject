@@ -41,9 +41,9 @@ app.get('/tasks/:id', async (req,res) => {
 })
 
 // Create a task, takes in a json object
-// {"title": "Insert Title", "body": "Inserted Body", "due_date": "2030-10-13"}
+// {"title": "Insert Title", "body": "Inserted Body", "deadline": "2030-10-13"}
 app.post('/tasks', async (req,res) => {
-    if(req.body.title == undefined || req.body.body == undefined || req.body.due_date == undefined){
+    if(req.body.title == undefined || req.body.body == undefined || req.body.deadline == undefined){
         res.status(400).send("Invalid body")
         return;
     }
@@ -225,31 +225,31 @@ if(await Task.countTasks() == 0){
     Task.createTask({
         title: "Task 1",
         body: "This is the first task",
-        due_date: "2024-4-30"
+        deadline: "2024-4-30"
     })
     
     Task.createTask({
         title: "Task 2",
         body: "This is the second task",
-        due_date: "2024-4-30"
+        deadline: "2024-4-30"
     })
 
     Task.createTask({
         title: "Task 3",
         body: "This is the third task",
-        due_date: "2024-4-30"
+        deadline: "2024-4-30"
     })
 
     Task.createTask({
         title: "Task 4",
         body: "This is the fourth task",
-        due_date: "2024-4-30"
+        deadline: "2024-4-30"
     })
 
     Task.createTask({
         title: "Task 5",
         body: "This is the fifth task",
-        due_date: "2024-4-30"
+        deadline: "2024-4-30"
     })
 
 }
@@ -262,6 +262,7 @@ if(await Users.countUsers() == 0){
         password: "password",
         zip: 12345
     });
+    
     Users.createUser({
         first_name: "Jane",
         last_name: "Doe",

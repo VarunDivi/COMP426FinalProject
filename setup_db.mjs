@@ -11,13 +11,16 @@ await db.run(`
             )`
         );
 
-
 await db.run(`
             CREATE TABLE Tasks (
                 id INTEGER PRIMARY KEY,
+                category CHECK(category IN ('work', 'school', 'personal')) DEFAULT 'personal',
                 title varchar(30),
                 body varchar(255),
-                due_date DATE
+                deadline TEXT,
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                completed BOOLEAN DEFAULT FALSE,
+                urgency INTEGER DEFAULT 0
             )`
         );
 

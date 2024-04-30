@@ -95,7 +95,6 @@ export class TaskView {
         userLoginDiv.appendChild(goHomeButton);
 
         return userLoginDiv;
-
         
     };
 
