@@ -21,6 +21,7 @@ app.get('/tasks', async (req,res) => {
         res.status(404).send("No tasks found");
         return;
     }
+    // console.log(await Users.assignUserTask(4,3));
     res.status(200).json(tasks);
     return;
 })

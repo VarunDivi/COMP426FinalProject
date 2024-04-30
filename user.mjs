@@ -31,7 +31,7 @@ export class Users {
             let user = await db.run("Insert into Users (first_name, last_name, email, password, zip) values (?,?,?,?,?)", data.first_name, data.last_name, data.email, data.password, data.zip);
 
             return {
-                id: 99,
+                id: user.lastID,
                 // id: user.lastID,
                 first_name: data.first_name,
                 last_name: data.last_name,
