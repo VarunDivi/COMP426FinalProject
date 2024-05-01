@@ -90,6 +90,12 @@ export class Task {
         let taskCount = (await db.get("Select count(*) as count from Tasks")).count;
         return taskCount;
     }
+
+    static async deleteTask(id) {
+        let task = await db.run("DELETE FROM Tasks WHERE id = ?", id);
+        let task2 = await db.run("DELETE FROM UserTasks WHERE task_id = ?", id);
+        return task;
+    }
     
 }
 

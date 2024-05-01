@@ -117,4 +117,34 @@ export class Task {
         }
     }
 
+    static async deleteTask(task_id) {
+        try {
+
+            // let date = async function(){
+            //     let d = new Date();
+            //     let date = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+            //     return date.toString();
+            // }
+
+            // data.created_at = await date();
+
+            // console.log(data)
+            console.log(task_id)
+                let response = await fetch(`http://localhost:3000/tasks/${task_id}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                let objJson = await response.json();
+                console.log('This is the objson')
+                console.log(objJson);
+                return objJson;
+            } catch (e) {
+                console.error(e);
+                throw e;
+        }
+    }
+
 }
