@@ -32,6 +32,18 @@ export class Users {
     set zip(zip){this.zip = zip;}
 
 
+    
+    static async seeWeather(zip){
+        try {
+            let response = await fetch(`http://localhost:3000/weather/${zip}`);
+            let objJson = await response.json();
+            return objJson;
+        } catch (e) {
+            console.error(e);
+            throw e;
+        }
+    }
+
     static async createUser(data) {
         try{
             let json_string = JSON.stringify({

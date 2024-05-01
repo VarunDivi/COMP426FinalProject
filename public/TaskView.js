@@ -11,7 +11,7 @@ export class TaskView {
         // 2 buttons. One to login, one to create user
         let userEntryDiv = document.createElement('div');
         userEntryDiv.classList.add('userEntry');
-        userEntryDiv.innerHTML = "<h1>Task App</h1>";
+        userEntryDiv.innerHTML = "<h1 id = title>Welcome to MyTaskApp</h1>";
 
         let loginButton = document.createElement('button');
         loginButton.classList.add('loginButton');
@@ -70,7 +70,6 @@ export class TaskView {
             let password = passwordInput.value;
             try{
                 let user = await Users.userLogin(email, password);
-                console.log(user);
                 userLoginDiv.innerHTML = ""; // clears page, loads homediv after auth
                 userLoginDiv.appendChild(this.createHomeDiv(user));
             } catch (e){
@@ -151,9 +150,7 @@ export class TaskView {
             try{
                 let data = {first_name, last_name, email, password, zip};
                 const user_created = await Users.createUser(data);
-                console.log(data)
                 console.log("Printing user retrieved down")
-                console.log(user_created)
                 createUserDiv.innerHTML = "";
                 createUserDiv.appendChild(this.createHomeDiv(user_created));
                 console.log("After homediv reroute")
@@ -183,9 +180,9 @@ export class TaskView {
     }
 
     createHomeDiv(user){
-        console.log("-1." + user)
-        console.log("reach home div")
+        console.log("User info")
         console.log(user)
+        console.log("reach home div")
         // Creating home div. Contains space for welcoming user inserting User Name, space to list tasks, weather block at the bottom
         let homeDiv = document.createElement('div');
         homeDiv.classList.add('home');
@@ -208,8 +205,6 @@ export class TaskView {
             const taskList = await Users.getAllUserTasks(user.id);
             taskList.forEach(async(task)=>{
                 console.log("Task info")
-                console.log(task)
-                console.log("0." + user)
                 let taskDiv = this.loadTaskDiv(task, user); // We are passing in the parsed task
                 let taskList = document.querySelector('.taskList'); // Retrieving the taskList div and adding to it
                 taskList.appendChild(taskDiv);
@@ -240,12 +235,24 @@ export class TaskView {
         let phraseDivView = this.createPhraseDiv();
         homeDiv.append(phraseDivView);
 
-        // let seeWeatherButton = document.createElement('button');
-        // seeWeatherButton.innerHTML = "See Weather";
-        // seeWeatherButton.addEventListener('click', async (e) =>{            
-        //     homeDiv.appendChild(weatherDiv);
-        // });
-        // homeDiv.appendChild(seeWeatherButton);
+        let weatherDiv = document.createElement('div');
+        weatherDiv.classList.add('weather');
+
+        const weather = async () => {
+            console.log(user.zip);
+            let weather_return = await Users.seeWeather(user.zip);
+
+            weatherDiv.innerHTML = `<p> City: ${weather_return.city} Temperature: ${weather_return.temperature} Humidity: ${weather_return.humidity} </p>`;
+            let weather_icon = document.createElement('img');
+            weather_icon.src = weather_return.icon;
+            weatherDiv.appendChild(weather_icon);
+            weather_icon.id = "weather_icon";
+
+            console.log("Weather return")
+        }
+        homeDiv.appendChild(weatherDiv);
+
+        weather();
 
         console.log("reached end of homediv")
         return homeDiv;

@@ -119,7 +119,8 @@ export class Users {
                 first_name: user.first_name,
                 last_name: user.last_name,
                 email: user.email,
-                password: user.password
+                password: user.password,
+                zip: user.zip
             }
         } catch (e) {
             console.error(e);

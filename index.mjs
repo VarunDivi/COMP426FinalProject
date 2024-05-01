@@ -12,6 +12,27 @@ app.use(bodyParser.json());
 app.use(cors());
 
 
+
+
+app.get('/weather/:zip', async (req,res) => {
+    const params = new URLSearchParams({
+        access_key: '828f10461dc621ae54706c2377e48769',
+        query: req.params.zip
+    });
+    
+    let response = await fetch(`http://api.weatherstack.com/current?${params}`)
+    let weather_raw = await response.json();
+    let weather_clean = {
+        temperature: weather_raw.current.temperature,
+        precipitation: weather_raw.current.precip,
+        humidity: weather_raw.current.humidity,
+        city: weather_raw.location.name,
+        icon: weather_raw.current.weather_icons[0]
+    }
+    res.status(200).json(weather_clean);
+    
+})
+
 // Task routes
 
 // Get all Tasks, no params
@@ -138,7 +159,8 @@ app.post('/users', async (req,res) => {
     }
 
     let user = await Users.createUser(req.body);
-    console.log(user)
+    console.log("Index user created")
+    console.log(user.zip)
     if(user){
         res.status(200).json(user);
         return;
@@ -287,7 +309,7 @@ if(await Users.countUsers() == 0){
         last_name: "Doe",
         email: "jdoe@gmail.com",
         password: "password",
-        zip: 12345
+        zip: 27516
     });
     
     Users.createUser({
@@ -295,7 +317,7 @@ if(await Users.countUsers() == 0){
         last_name: "Doe",
         email: "Janedoe@gmail.com",
         password: "password",
-        zip: 12345
+        zip: 27514
     });
 
     Users.createUser({
@@ -303,7 +325,7 @@ if(await Users.countUsers() == 0){
         last_name: "Smith",
         email: "rsmith@gmail.com",
         password: "password",
-        zip: 12345
+        zip: 27713
     });
 }
 
