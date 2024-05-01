@@ -222,10 +222,10 @@ app.get('/users/:id/tasks', async (req,res) => {
         return;
     }
 
-    if(tasks.length == 0){
-        res.status(200).send(`No tasks assigned to user ${id}`)
-        return;
-    }
+    // if(tasks.length == 0){
+    //     res.status(200).send(`No tasks assigned to user ${id}`)
+    //     return;
+    // }
 
     res.status(200).json(tasks);
     return;

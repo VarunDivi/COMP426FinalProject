@@ -160,7 +160,7 @@ export class TaskView {
             } catch (e){
                 let error_mes = document.createElement('p');
                 error_mes.innerHTML = e;
-                createUserDiv.appendChild(error_mes);
+                createUserDiv.appendChild("Password mus");
                 console.log(e);
                 alert(e);
             }
