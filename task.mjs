@@ -33,7 +33,9 @@ export class Task {
     }
 
     static async createTask(data){
-        let task = (await db.run("Insert into Tasks (category, title, body, deadline, completed, urgency) values (?,?,?,?,?,?)", data.category, data.title, data.body, data.deadline, data.completed, data.urgency)).lastID;
+        let task = (await db.run("Insert into Tasks (category, title, body, deadline, completed, urgency) values (?,?,?,?,?,?)", data.category, data.title, data.body, data.deadline, data.completed, data.urgency));
+        console.log("Logging newly made id")
+        console.log(task.id);
         return {
             id: task.lastID,
             category: data.category,

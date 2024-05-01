@@ -39,13 +39,12 @@ export class Task {
                 deadline: data.deadline,
                 created_at: data.created_at,
                 completed: data.completed,
-                urgency: data.urgency
-
+                urgency: data.urgency,
             })
         });
 
         let objJson = await response.json();
-        return new Task(objJson);
+        return objJson;
         }
 
 

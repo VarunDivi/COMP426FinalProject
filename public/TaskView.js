@@ -88,8 +88,8 @@ export class TaskView {
         goHomeButton.addEventListener('click', async (e) => {
             console.log("Back to Login Button Clicked");
             e.preventDefault();
-            userLoginDiv.innerHTML = "";
-            userLoginDiv.appendChild(this.userEntryDiv());
+            this.rootDiv.innerHTML = "";
+            this.rootDiv.appendChild(this.userEntryDiv());
         });
 
         userLoginDiv.appendChild(goHomeButton);
@@ -220,11 +220,21 @@ export class TaskView {
         logoutButton.addEventListener('click', async (e) => {
             console.log("Logout Button Clicked");
             e.preventDefault();
-            homeDiv.innerHTML = "";
-            homeDiv.appendChild(this.userLoginDiv());
+            this.rootDiv.innerHTML = "";
+            this.rootDiv.appendChild(this.userLoginDiv());
         });
         homeDiv.appendChild(logoutButton);
 
+        let createTaskButton = document.createElement('button');
+        createTaskButton.innerHTML = "Create Task";
+        createTaskButton.addEventListener('click', async (e) => {
+            console.log("Create Task Button Clicked");
+            e.preventDefault();
+            this.rootDiv.innerHTML = "";
+            this.rootDiv.appendChild(this.createTaskDiv(user));
+        });
+
+        homeDiv.appendChild(createTaskButton);
         let phraseDivView = this.createPhraseDiv();
         homeDiv.append(phraseDivView);
 
@@ -234,24 +244,93 @@ export class TaskView {
         //     homeDiv.appendChild(weatherDiv);
         // });
         // homeDiv.appendChild(seeWeatherButton);
+
         console.log("reached end of homediv")
         return homeDiv;
     }
+
+// This function uses the edit form to create a new task in the createTaskDiv
+createTaskDiv(user){
+    let createTaskDiv = document.createElement('div');
+    createTaskDiv.classList.add('createTask');
+
+    let createTaskForm = document.createElement('form');
+    createTaskForm.classList.add('createTaskForm');
+
+    let titleInput = document.createElement('input');
+    titleInput.setAttribute('type', 'text');
+    titleInput.setAttribute('name', 'title');
+    titleInput.setAttribute('placeholder', 'Title');
+    createTaskForm.appendChild(titleInput);
+
+    let categoryInput = document.createElement('input');
+    categoryInput.setAttribute('type', 'text');
+    categoryInput.setAttribute('name', 'category');
+    categoryInput.setAttribute('placeholder', 'Category');
+    createTaskForm.appendChild(categoryInput);
+
+    let bodyInput = document.createElement('input');
+    bodyInput.setAttribute('type', 'text');
+    bodyInput.setAttribute('name', 'body');
+    bodyInput.setAttribute('placeholder', 'Body');
+    createTaskForm.appendChild(bodyInput);
+
+    let deadlineInput = document.createElement('input');
+    deadlineInput.setAttribute('type', 'text');
+    deadlineInput.setAttribute('name', 'deadline');
+    deadlineInput.setAttribute('placeholder', 'Deadline');
+    createTaskForm.appendChild(deadlineInput);
+
+    let completedInput = document.createElement('input');
+    completedInput.setAttribute('type', 'text');
+    completedInput.setAttribute('name', 'completed');
+    completedInput.setAttribute('placeholder', 'Completed');
+    createTaskForm.appendChild(completedInput);
+
+    let urgencyInput = document.createElement('input');
+    urgencyInput.setAttribute('type', 'text');
+    urgencyInput.setAttribute('name', 'urgency');
+    urgencyInput.setAttribute('placeholder', 'Urgency');
+    createTaskForm.appendChild(urgencyInput);
+
+    let createTaskButton = document.createElement('button');
+    createTaskButton.innerHTML = "Create Task";
+    createTaskButton.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(createTaskForm);
+        const data = {
+            category: formData.get('category'),
+            title: formData.get('title'),
+            body: formData.get('body'),
+            deadline: formData.get('deadline'),
+            completed: formData.get('completed'),
+            urgency: formData.get('urgency')
+        };
+        try {
+            let task = await Task.createTask(data);
+            console.log(user.id, task.id)
+            await Users.assignUserTask(user.id, task.id);
+            console.log(task);
+            this.rootDiv.innerHTML = "";
+            this.rootDiv.appendChild(this.createHomeDiv(user));
+        } catch (error) {
+            console.error(error);
+            alert(error.message || 'Failed to create task');
+        }
+    });
+
+    createTaskForm.appendChild(createTaskButton);
+    createTaskDiv.appendChild(createTaskForm);
+
+    return createTaskDiv;
+}
+
 // This function loads a div for each task
 loadTaskDiv(task, fromEdit=false) {
     let taskDiv = document.createElement('div');
     taskDiv.classList.add('task');
 
     this.updateTaskDivContent(taskDiv, task);
-
-    // Button to edit task
-    let editButton = document.createElement('button');
-    editButton.innerHTML = "Edit Task";
-    editButton.addEventListener('click', (e) => {
-        e.preventDefault();
-        this.showEditForm(taskDiv, task);
-    });
-    taskDiv.appendChild(editButton);
 
     return taskDiv;
 }
@@ -266,13 +345,14 @@ updateTaskDivContent(taskDiv, task) {
         <p>Updated on: ${task.created_at}</p>
         <p>Complete: ${task.completed}</p>
         <p>Urgency: ${task.urgency}</p>
-        <button>Edit Task</button>
+        <button>Edit</button>
     `;
 
     taskDiv.querySelector('button').addEventListener('click', (e) => {
         e.preventDefault();
         this.showEditForm(taskDiv, task);
     });
+    
 }
 
 // Show edit form in the taskDiv
@@ -338,6 +418,7 @@ createPhraseDiv() {
     return phraseDiv;
 }
 
+
     // createWeatherDiv(){
     //     let weatherDiv = document.createElement('div');
     //     weatherDiv.classList.add('weather');
@@ -354,3 +435,4 @@ createPhraseDiv() {
     //     return weatherDiv;
     // }
 }
+
