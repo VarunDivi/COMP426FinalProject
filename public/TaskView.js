@@ -74,7 +74,10 @@ export class TaskView {
                 userLoginDiv.appendChild(this.createHomeDiv(user));
             } catch (e){
                 console.log(e);
-                alert(e);
+                let error_div = document.createElement('div');
+                error_div.classList.add('error');
+                error_div.innerHTML = "Invalid email or password";
+                userLoginDiv.appendChild(error_div);
             }
         });
         userLoginForm.appendChild(loginButton);
@@ -156,10 +159,9 @@ export class TaskView {
                 console.log("After homediv reroute")
             } catch (e){
                 let error_mes = document.createElement('p');
-                error_mes.innerHTML = e;
-                createUserDiv.appendChild("Password mus");
+                error_mes.innerHTML = "Error creating user. Password must be >8 characters, email must be unique, and zip must be a number.";
+                createUserDiv.appendChild(error_mes);
                 console.log(e);
-                alert(e);
             }
         });
 
@@ -189,7 +191,7 @@ export class TaskView {
         
         let welcomeDiv = document.createElement('div');
         welcomeDiv.classList.add('welcome');
-        welcomeDiv.innerHTML = `Welcome ${user.first_name} ${user.last_name}. Here are your tasks!`;
+        welcomeDiv.innerHTML = `<h1> Welcome ${user.first_name} ${user.last_name}. Here are your tasks! </h1>`;
         homeDiv.appendChild(welcomeDiv);
 
         // list of tasks as a div
@@ -201,6 +203,7 @@ export class TaskView {
         // Creates a button to view the contents of each task
         // Removes the button after it is clicked
         const loadTasks = async () => {
+            try {
             console.log(`Reached loadtasks. User id: ${user.id}`)
             const taskList = await Users.getAllUserTasks(user.id);
             taskList.forEach(async(task)=>{
@@ -209,6 +212,12 @@ export class TaskView {
                 let taskList = document.querySelector('.taskList'); // Retrieving the taskList div and adding to it
                 taskList.appendChild(taskDiv);
             })
+        } catch (e) {
+            let error_div = document.createElement('div');
+            error_div.classList.add('error');
+            error_div.innerHTML = "Error loading tasks";
+            homeDiv.appendChild(error_div);
+        }
         }
         loadTasks();
 
@@ -324,7 +333,10 @@ createTaskDiv(user){
             this.rootDiv.appendChild(this.createHomeDiv(user));
         } catch (error) {
             console.error(error);
-            alert(error.message || 'Failed to create task');
+            let error_div = document.createElement('div');
+            error_div.classList.add('error');
+            error_div.innerHTML = "Error creating task";
+            createTaskDiv.appendChild(error_div);
         }
     });
 
@@ -404,7 +416,10 @@ showEditForm(taskDiv, task, user) {
             this.updateTaskDivContent(taskDiv, updatedTask, user);
         } catch (error) {
             console.error(error);
-            alert(error.message || 'Failed to update task');
+            let error_div = document.createElement('div');
+            error_div.classList.add('error');
+            error_div.innerHTML = "Error updating task";
+            taskDiv.appendChild(error_div);
         }
     });
 }
