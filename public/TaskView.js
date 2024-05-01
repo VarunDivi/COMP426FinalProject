@@ -223,6 +223,9 @@ export class TaskView {
         });
         homeDiv.appendChild(logoutButton);
 
+        let phraseDivView = this.createPhraseDiv();
+        homeDiv.append(phraseDivView);
+
         // let seeWeatherButton = document.createElement('button');
         // seeWeatherButton.innerHTML = "See Weather";
         // seeWeatherButton.addEventListener('click', async (e) =>{            
@@ -299,6 +302,33 @@ showEditForm(taskDiv, task) {
             alert(error.message || 'Failed to update task');
         }
     });
+}
+
+createPhraseDiv() {
+    let phraseDiv = document.createElement('div');
+    phraseDiv.classList.add('phrase');
+
+    phraseDiv.innerHTML = `
+        <div>
+        <button id=phrase-button>Get Inspirational Phrase</button>
+        </div>
+    `;
+    let query = phraseDiv.querySelector('#phrase-button');
+
+    let inspirationalPhraseDiv = document.createElement('h5');
+    query.addEventListener('click', async () => {
+
+        let phrase = (await fetch("https://corporatebs-generator.sameerkumar.website/"));
+        let phraseJson = await phrase.json();
+
+        let inspirationalPhrase = phraseJson.phrase;
+        
+        inspirationalPhraseDiv.innerHTML = `<p>${inspirationalPhrase}</p>`;
+        phraseDiv.append(inspirationalPhraseDiv);
+
+    });
+
+    return phraseDiv;
 }
 
     // createWeatherDiv(){
