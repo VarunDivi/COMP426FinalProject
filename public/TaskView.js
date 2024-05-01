@@ -206,6 +206,8 @@ export class TaskView {
             console.log(`Reached loadtasks. User id: ${user.id}`)
             const taskList = await Users.getAllUserTasks(user.id);
             taskList.forEach(async(task)=>{
+                console.log("Task info")
+                console.log(task)
                 let taskDiv = this.loadTaskDiv(task); // We are passing in the parsed task
                 let taskList = document.querySelector('.taskList'); // Retrieving the taskList div and adding to it
                 taskList.appendChild(taskDiv);
@@ -255,13 +257,12 @@ loadTaskDiv(task, fromEdit=false) {
 updateTaskDivContent(taskDiv, task) {
     taskDiv.innerHTML = `
         <h1>${task.title}</h1>
-        <p>${task.category}</p>
-        <p>${task.body}</p>
-        <p>${task.deadline}</p>
-        <p>${task.created_at}</p>
-        <p>${task.completed}</p>
-        <p>${task.urgency}</p>
-        <p>${task.id}</p>
+        <p>Category: ${task.category}</p>
+        <p>Body: ${task.body}</p>
+        <p>Deadline: ${task.deadline}</p>
+        <p>Updated on: ${task.created_at}</p>
+        <p>Complete: ${task.completed}</p>
+        <p>Urgency: ${task.urgency}</p>
         <button>Edit Task</button>
     `;
 
@@ -277,8 +278,11 @@ showEditForm(taskDiv, task) {
     let form = document.createElement('form');
     form.innerHTML = `
         <input type="text" name="title" placeholder="Title" value="${task.title}">
+        <input type="text" name="category" placeholder="Category" value="${task.category}">
         <input type="text" name="body" placeholder="Body" value="${task.body}">
         <input type="text" name="deadline" placeholder="Deadline" value="${task.deadline}">
+        <input type="text" name="completed" placeholder="Completed" value="${task.completed}">
+        <input type="text" name="urgency" placeholder="Urgency" value="${task.urgency}">
         <button type="submit">Save Changes</button>
     `;
     taskDiv.appendChild(form);
@@ -288,8 +292,11 @@ showEditForm(taskDiv, task) {
         const formData = new FormData(form);
         const data = {
             title: formData.get('title'),
+            category: formData.get('category'),
             body: formData.get('body'),
-            deadline: formData.get('deadline')
+            deadline: formData.get('deadline'),
+            completed: formData.get('completed'),
+            urgency: formData.get('urgency')
         };
         try {
             let updatedTask = await Task.updateTask(task.id, data);

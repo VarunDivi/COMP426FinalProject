@@ -2,41 +2,46 @@ export class Task {
     #id;
     #title;
     #body;
-    #due_date;
+    #deadline;
 
 
     constructor(objJson){
         this.#id = objJson.id;
         this.#title = objJson.title;
         this.#body = objJson.body;
-        this.#due_date = objJson.due_date;
+        this.#deadline = objJson.deadline;
     }
 
     get id(){return this.#id;}
     get title(){return this.#title;}
     get body(){return this.#body;}
-    get due_date(){return this.#due_date;}
+    get deadline(){return this.#deadline;}
 
     set id(id){this.#id = id;}
     set title(title){this.#title = title;}
     set body(body){this.#body = body;}
-    set due_date(due_date){this.#due_date = due_date;}
+    set deadline(deadline){this.#deadline = deadline;}
 
 
     // Takes in 3 parameters, converts to json and posts
-    static async createTask(title, body, due_date){
-        let json_string = JSON.stringify({
-            title: title,
-            body: body,
-            due_date: due_date
-        });
+    static async createTask(data){
+
 
         let response = await fetch("http://localhost:3000/tasks", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: json_string
+            body: JSON.stringify({
+                category: data.category,
+                title: data.title,
+                body: data.body,
+                deadline: data.deadline,
+                created_at: data.created_at,
+                completed: data.completed,
+                urgency: data.urgency
+
+            })
         });
 
         let objJson = await response.json();
@@ -75,6 +80,15 @@ export class Task {
 
     static async updateTask(task_id, data){
         try {
+
+            let date = async function(){
+                let d = new Date();
+                let date = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+                return date.toString();
+            }
+
+            data.created_at = await date();
+
             console.log(data)
             console.log(task_id)
                 let response = await fetch(`http://localhost:3000/tasks/${task_id}`, {
@@ -84,9 +98,13 @@ export class Task {
                     },
                     body: JSON.stringify({
                         id: task_id,
+                        category: data.category,
                         title: data.title,
                         body: data.body,
-                        due_date: data.due_date
+                        deadline: data.deadline,
+                        created_at: data.created_at,
+                        completed: data.completed,
+                        urgency: data.urgency
                     })
                 });
 

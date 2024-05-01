@@ -154,7 +154,7 @@ export class Users {
         let taskList = []
         let userTasks = await db.all("Select * from UserTasks where user_id = ?", id);
         for(const task of userTasks){
-            let task_data = (await db.get("Select Tasks.id, Tasks.title, Tasks.body, Tasks.deadline from Tasks where id = ?", task.task_id));
+            let task_data = (await db.get("Select * from Tasks where id = ?", task.task_id));
             taskList.push(task_data);
         }
         return taskList;

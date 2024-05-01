@@ -14,7 +14,7 @@ await db.run(`
 await db.run(`
             CREATE TABLE Tasks (
                 id INTEGER PRIMARY KEY,
-                category CHECK(category IN ('work', 'school', 'personal')) DEFAULT 'personal',
+                category TEXT default 'personal',
                 title varchar(30),
                 body varchar(255),
                 deadline TEXT,

@@ -222,36 +222,50 @@ app.get('/users/:id/tasks', async (req,res) => {
 //Creating default task on startup
 console.log(await Task.countTasks());
 if(await Task.countTasks() == 0){
-    Task.createTask({
+    await Task.createTask({
+        category: "work",
         title: "Task 1",
         body: "This is the first task",
-        deadline: "2024-4-30"
+        deadline: "2024-4-30",
+        completed: false,
+        urgency: 1
     })
-    
-    Task.createTask({
+
+    await Task.createTask({
+        category: "work",
         title: "Task 2",
         body: "This is the second task",
-        deadline: "2024-4-30"
+        deadline: "2024-4-30",
+        completed: false,
+        urgency: 0,
     })
 
-    Task.createTask({
+    await Task.createTask({
+        category: "work",
         title: "Task 3",
         body: "This is the third task",
-        deadline: "2024-4-30"
+        deadline: "2024-4-30",
+        completed: false,
+        urgency: 0,
     })
 
-    Task.createTask({
+    await Task.createTask({
+        category: "work",
         title: "Task 4",
         body: "This is the fourth task",
-        deadline: "2024-4-30"
+        deadline: "2024-4-30",
+        completed: false,
+        urgency: 0,
     })
 
-    Task.createTask({
+    await Task.createTask({
+        category: "work",
         title: "Task 5",
         body: "This is the fifth task",
-        deadline: "2024-4-30"
+        deadline: "2024-4-30",
+        completed: false,
+        urgency: 0,
     })
-
 }
 
 if(await Users.countUsers() == 0){

@@ -26,14 +26,14 @@ export class Task {
         this.category = category;
         this.title = title;
         this.body = body;
-        this.deadline = due_date;
+        this.deadline = deadline;
         this.created_at = created_at;
         this.completed = completed;
         this.urgency = urgency;
     }
 
     static async createTask(data){
-        let task = (await db.run("Insert into Tasks (title, body, deadline) values (?,?,?)", data.title, data.body, data.deadline)).lastID;
+        let task = (await db.run("Insert into Tasks (category, title, body, deadline, completed, urgency) values (?,?,?,?,?,?)", data.category, data.title, data.body, data.deadline, data.completed, data.urgency)).lastID;
         return {
             id: task.lastID,
             category: data.category,
@@ -47,10 +47,11 @@ export class Task {
     }
 
     static async updateTask(task_id, data) {
-        let task = await db.get("Update Tasks set title = ?, body = ?, deadline = ? where id = ?", data.title, data.body, data.deadline, task_id);
+        console.log("Updating in prog")
+        let task = await db.get("Update Tasks set category = ?, title = ?, body = ?, deadline = ?, created_at = ?, completed = ?, urgency = ? where id = ?", data.category, data.title, data.body, data.deadline, data.created_at, data.completed, data.urgency, task_id);
 
         return {
-            id: task.lastID,
+            id: task_id,
             category: data.category,
             title: data.title,
             body: data.body,
@@ -91,4 +92,4 @@ export class Task {
 }
 
 
-// {"title": "Insert Title", "body": "Inserted Body", "due_date": "2030-10-13"}
+// {"title": "Insert Title", "body": "Inserted Body", "deadline": "2030-10-13"}
