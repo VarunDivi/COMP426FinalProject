@@ -67,6 +67,19 @@ app.put('/tasks/:id', async (req,res) => {
     return;
 });
 
+// Deletes a task by ID
+app.delete('/tasks/:id', async (req, res) => {
+    if (req.params.id == undefined) {
+        res.status(400).send("Invalid ID");
+        return;
+    }
+
+    let deleteTask = await Task.deleteTask(req.params.id);
+
+    res.status(200).json(deleteTask);
+    return;
+});
+
 
 // User Routes
 
@@ -297,11 +310,15 @@ if(await Users.countUsers() == 0){
 console.log(`Num user tasks ${Users.countUserTask()}`);
 if(await Users.countUserTask() == 0){
     // Assigning User 1 to Task 1. John to Task 1
-    Users.assignUserTask(1,1);
+    await Users.assignUserTask(1,1);
     // Assigning User 2 to Task 2. Jane to Task 2
-    Users.assignUserTask(1,2);
+    await Users.assignUserTask(1,2);
     // Assigning User 3 to Task 3. Ron to Task 3
-    Users.assignUserTask(2,3);
+    await Users.assignUserTask(2,3);
+    // Assigning User 3 to Task 3. Ron to Task 3
+    await Users.assignUserTask(1,3);
+    await Users.assignUserTask(1,4);
+    await Users.assignUserTask(1,5);
 }
 
 

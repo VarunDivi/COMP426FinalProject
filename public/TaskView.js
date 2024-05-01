@@ -84,7 +84,7 @@ export class TaskView {
 
         //Back to home
         let goHomeButton = document.createElement('button');
-        goHomeButton.innerHTML = "Back to Login";
+        goHomeButton.innerHTML = "Back to Home";
         goHomeButton.addEventListener('click', async (e) => {
             console.log("Back to Login Button Clicked");
             e.preventDefault();
@@ -183,6 +183,7 @@ export class TaskView {
     }
 
     createHomeDiv(user){
+        console.log("-1." + user)
         console.log("reach home div")
         console.log(user)
         // Creating home div. Contains space for welcoming user inserting User Name, space to list tasks, weather block at the bottom
@@ -208,7 +209,8 @@ export class TaskView {
             taskList.forEach(async(task)=>{
                 console.log("Task info")
                 console.log(task)
-                let taskDiv = this.loadTaskDiv(task); // We are passing in the parsed task
+                console.log("0." + user)
+                let taskDiv = this.loadTaskDiv(task, user); // We are passing in the parsed task
                 let taskList = document.querySelector('.taskList'); // Retrieving the taskList div and adding to it
                 taskList.appendChild(taskDiv);
             })
@@ -221,7 +223,8 @@ export class TaskView {
             console.log("Logout Button Clicked");
             e.preventDefault();
             homeDiv.innerHTML = "";
-            homeDiv.appendChild(this.userLoginDiv());
+            this.rootDiv.innerHTML = "";
+            this.rootDiv.appendChild(this.userLoginDiv());
         });
         homeDiv.appendChild(logoutButton);
 
@@ -238,26 +241,19 @@ export class TaskView {
         return homeDiv;
     }
 // This function loads a div for each task
-loadTaskDiv(task, fromEdit=false) {
+loadTaskDiv(task, user) {
+    console.log("1." + user)
     let taskDiv = document.createElement('div');
     taskDiv.classList.add('task');
 
-    this.updateTaskDivContent(taskDiv, task);
-
-    // Button to edit task
-    let editButton = document.createElement('button');
-    editButton.innerHTML = "Edit Task";
-    editButton.addEventListener('click', (e) => {
-        e.preventDefault();
-        this.showEditForm(taskDiv, task);
-    });
-    taskDiv.appendChild(editButton);
+    this.updateTaskDivContent(taskDiv, task, user);
 
     return taskDiv;
 }
 
 // Updates the content of the taskDiv with task details
-updateTaskDivContent(taskDiv, task) {
+updateTaskDivContent(taskDiv, task, user) {
+    console.log("2." + user);
     taskDiv.innerHTML = `
         <h1>${task.title}</h1>
         <p>Category: ${task.category}</p>
@@ -266,17 +262,24 @@ updateTaskDivContent(taskDiv, task) {
         <p>Updated on: ${task.created_at}</p>
         <p>Complete: ${task.completed}</p>
         <p>Urgency: ${task.urgency}</p>
-        <button>Edit Task</button>
+        <button id=edit>Edit Task</button>
+        <button id=delete>Delete Task</button>
     `;
 
-    taskDiv.querySelector('button').addEventListener('click', (e) => {
+    taskDiv.querySelector('#edit').addEventListener('click', (e) => {
         e.preventDefault();
-        this.showEditForm(taskDiv, task);
+        this.showEditForm(taskDiv, task, user);
+    });
+    taskDiv.querySelector('#delete').addEventListener('click', async (e) => {
+        e.preventDefault();
+        await Task.deleteTask(task.id);
+        this.rootDiv.innerHTML = '';
+        this.rootDiv.appendChild(this.createHomeDiv(user));
     });
 }
 
 // Show edit form in the taskDiv
-showEditForm(taskDiv, task) {
+showEditForm(taskDiv, task, user) {
     taskDiv.innerHTML = ''; // Clear the existing content
     let form = document.createElement('form');
     form.innerHTML = `
@@ -303,7 +306,7 @@ showEditForm(taskDiv, task) {
         };
         try {
             let updatedTask = await Task.updateTask(task.id, data);
-            this.updateTaskDivContent(taskDiv, updatedTask);
+            this.updateTaskDivContent(taskDiv, updatedTask, user);
         } catch (error) {
             console.error(error);
             alert(error.message || 'Failed to update task');
