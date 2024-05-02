@@ -12,8 +12,6 @@ app.use(bodyParser.json());
 app.use(cors());
 
 
-
-
 app.get('/weather/:zip', async (req,res) => {
     const params = new URLSearchParams({
         access_key: '828f10461dc621ae54706c2377e48769',
@@ -259,52 +257,53 @@ console.log(await Task.countTasks());
 if(await Task.countTasks() == 0){
     await Task.createTask({
         category: "work",
-        title: "Task 1",
-        body: "This is the first task",
-        deadline: "2024-4-30",
+        title: "Send work email",
+        body: "Send an email to manager",
+        deadline: "2024-05-05",
         completed: false,
         urgency: 1
     })
 
     await Task.createTask({
-        category: "work",
-        title: "Task 2",
-        body: "This is the second task",
-        deadline: "2024-4-30",
+        category: "School",
+        title: "Finish 426 Final Project",
+        body: "Record video and publis",
+        deadline: "2024-05-02",
         completed: false,
-        urgency: 0,
+        urgency: 6,
+    })
+
+    await Task.createTask({
+        category: "school",
+        title: "Finish 562 Final Project",
+        body: "Finish writing paper",
+        deadline: "2024-05-1",
+        completed: false,
+        urgency: 9,
+    })
+
+    await Task.createTask({
+        category: "personal",
+        title: "Car Registration",
+        body: "Renew Car Registration",
+        deadline: "2024-06-05",
+        completed: false,
+        urgency: 2,
     })
 
     await Task.createTask({
         category: "work",
-        title: "Task 3",
-        body: "This is the third task",
-        deadline: "2024-4-30",
+        title: "Submit weekly update",
+        body: "Update HR",
+        deadline: "2024-05-05",
         completed: false,
-        urgency: 0,
-    })
-
-    await Task.createTask({
-        category: "work",
-        title: "Task 4",
-        body: "This is the fourth task",
-        deadline: "2024-4-30",
-        completed: false,
-        urgency: 0,
-    })
-
-    await Task.createTask({
-        category: "work",
-        title: "Task 5",
-        body: "This is the fifth task",
-        deadline: "2024-4-30",
-        completed: false,
-        urgency: 0,
+        urgency: 6,
     })
 }
 
+// Edit example
 if(await Users.countUsers() == 0){
-    Users.createUser({
+    await Users.createUser({
         first_name: "John",
         last_name: "Doe",
         email: "jdoe@gmail.com",
@@ -312,21 +311,25 @@ if(await Users.countUsers() == 0){
         zip: 27516
     });
     
-    Users.createUser({
-        first_name: "Jane",
+    // create
+    await Users.createUser({
+        first_name: "Deborah",
         last_name: "Doe",
-        email: "Janedoe@gmail.com",
+        email: "ddoe@gmail.com",
         password: "password",
         zip: 27514
     });
 
-    Users.createUser({
+    // Delete Example
+    await Users.createUser({
         first_name: "Ron",
         last_name: "Smith",
         email: "rsmith@gmail.com",
         password: "password",
-        zip: 27713
+        zip: 77554
     });
+
+    // New User | ALL demonstration
 }
 
 console.log(`Num user tasks ${Users.countUserTask()}`);
@@ -334,13 +337,11 @@ if(await Users.countUserTask() == 0){
     // Assigning User 1 to Task 1. John to Task 1
     await Users.assignUserTask(1,1);
     // Assigning User 2 to Task 2. Jane to Task 2
-    await Users.assignUserTask(1,2);
+    await Users.assignUserTask(2,2);
     // Assigning User 3 to Task 3. Ron to Task 3
     await Users.assignUserTask(2,3);
-    // Assigning User 3 to Task 3. Ron to Task 3
-    await Users.assignUserTask(1,3);
-    await Users.assignUserTask(1,4);
-    await Users.assignUserTask(1,5);
+    await Users.assignUserTask(2,4);
+    await Users.assignUserTask(2,5);
 }
 
 

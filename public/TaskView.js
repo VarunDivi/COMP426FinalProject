@@ -205,7 +205,10 @@ export class TaskView {
         const loadTasks = async () => {
             try {
             console.log(`Reached loadtasks. User id: ${user.id}`)
-            const taskList = await Users.getAllUserTasks(user.id);
+            const taskList = await Users.getAllUserTasks(user.id)
+
+            taskList.sort((a,b) => b.urgency - a.urgency)
+
             taskList.forEach(async(task)=>{
                 console.log("Task info")
                 let taskDiv = this.loadTaskDiv(task, user); // We are passing in the parsed task
@@ -213,6 +216,7 @@ export class TaskView {
                 taskList.appendChild(taskDiv);
             })
         } catch (e) {
+            console.log(e)
             let error_div = document.createElement('div');
             error_div.classList.add('error');
             error_div.innerHTML = "Error loading tasks";
@@ -362,14 +366,14 @@ updateTaskDivContent(taskDiv, task, user) {
     console.log("2." + user);
     taskDiv.innerHTML = `
         <h1>${task.title}</h1>
+        <p>Urgency: ${task.urgency}</p>
         <p>Category: ${task.category}</p>
         <p>Body: ${task.body}</p>
         <p>Deadline: ${task.deadline}</p>
         <p>Updated on: ${task.created_at}</p>
         <p>Complete: ${task.completed}</p>
-        <p>Urgency: ${task.urgency}</p>
         <button id=edit>Edit Task</button>
-        <button id=delete>Delete Task</button>
+        <button id=delete>Complete Task</button>
     `;
 
     taskDiv.querySelector('#edit').addEventListener('click', (e) => {
